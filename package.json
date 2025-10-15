@@ -1,0 +1,44 @@
+{
+  "name": "tinkerbon",
+  "displayName": "Tinker Bon",
+  "description": "Run PHP code in Tinker directly from VSCode",
+  "version": "0.0.1",
+  "publisher": "hecktorvn",
+  "engines": {
+    "vscode": "^1.104.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:tinkerbon.newFile",
+    "onCommand:tinkerbon.runCode"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "tinkerbon.newFile",
+        "title": "New Tinker File"
+      },
+      {
+        "command": "tinkerbon.runCode",
+        "title": "Run Code in Tinker"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "yarn run lint",
+    "test": "vscode-test",
+    "postinstall": "node ./scripts/install-php-wrapper.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.104.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "eslint": "^9.34.0",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
