@@ -4,9 +4,8 @@ const vscode = require('vscode');
 
 const outputChannel = vscode.window.createOutputChannel('Laravel Tinker');
 
-function runTinkerCode(context, code) {
+function runTinkerCode(editor, context) {
     return new Promise((resolve) => {
-        const editor = vscode.window.activeTextEditor;
         if (!editor) return;
 
         const workspacePath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
@@ -15,10 +14,7 @@ function runTinkerCode(context, code) {
         let output = '';
         let error = '';
 
-        if(!code) {
-            code = editor.selection.isEmpty ? editor.document.getText() : editor.document.getText(editor.selection);
-        }
-
+        const code = editor.document.getText();
         const phpScript = path.join(context.extensionPath, 'php-wrapper', 'run_psysh.php');
 
         const cleanedCode = code.trim().replace(/^<\?php\s*/, '');

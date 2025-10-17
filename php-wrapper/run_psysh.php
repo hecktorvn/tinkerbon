@@ -1,8 +1,8 @@
 <?php
-// run_psysh.php
-
 use Psy\Shell;
 use Symfony\Component\Console\Output\BufferedOutput;
+
+include_once __DIR__ . '/extractStatments.php';
 
 global $argv;
 
@@ -44,7 +44,7 @@ $shell->setOutput($buffer);
 
 // 5️⃣ Quebra o código em expressões por ";"
 // Mantém variáveis no mesmo contexto usando addInput sequencial
-$lines = array_filter(array_map('trim', explode(';', $code)));
+$lines = extractPhpStatements($code);
 $results = [];
 
 ob_start();
@@ -52,12 +52,12 @@ foreach ($lines as $line) {
     if ($line === '') continue;
 
     if(str_starts_with($line, 'use') || str_starts_with($line, 'require') || str_starts_with($line, 'include')) {
-        $shell->execute($line . ';');
+        $shell->execute($line);
         continue;
     }
 
     try {
-        $results[] = $shell->execute($line . ';');
+        $results[] = $shell->execute($line);
     } catch (\Throwable $e) {
         $output = 'Error: ' . $e->getMessage();
         $results[] = $output;

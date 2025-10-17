@@ -2,10 +2,10 @@
   "name": "tinkerbon",
   "displayName": "Tinker Bon",
   "description": "Run PHP code in Tinker directly from VSCode",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "hecktorvn",
   "engines": {
-    "vscode": "^1.104.0"
+    "vscode": ">=1.80.0"
   },
   "categories": [
     "Other"
@@ -34,12 +34,12 @@
     "postinstall": "node ./scripts/install-php-wrapper.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.104.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
-    "eslint": "^9.34.0",
+    "@types/vscode": "^1.80.0",
     "@vscode/test-cli": "^0.0.11",
-    "@vscode/test-electron": "^2.5.2"
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.34.0"
   },
   "repository": {
     "type": "git",

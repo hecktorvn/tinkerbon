@@ -1,17 +1,14 @@
 const vscode = require('vscode');
 const { runTinkerCode } = require('./tinkerExecutor');
 
+
 function activate(context) {
+	let activeEditor = null;
 
 	// Registrar comando para criar novo arquivo Tinker
 	const disposableCommand = vscode.commands.registerCommand('tinkerbon.newFile', async () => {
-		const uri = vscode.Uri.parse('untitled:' + 'new.tinker.php');
-		const document = await vscode.workspace.openTextDocument(uri);
-
-		const editor = await vscode.window.showTextDocument(document, { preview: false });
-		await editor.edit(editBuilder => {
-			editBuilder.insert(new vscode.Position(0, 0), '<?php\n\n$result = 5+56;\n\n');
-		});
+		const document = await vscode.workspace.openTextDocument({ language: 'php', content: '<?php\n\n$result = 5+56;\n\n' });
+		activeEditor = await vscode.window.showTextDocument(document, { preview: false });
 
 		// Abrir preview ao lado
 		openPreview(document);
@@ -21,7 +18,7 @@ function activate(context) {
 
 	// Registrar comando para rodar Tinker no editor ativo
 	const disposableRun = vscode.commands.registerCommand('tinkerbon.runCode', async () => {
-		runTinkerCode(context);
+		runTinkerCode(activeEditor, context);
 	});
 
 	context.subscriptions.push(disposableRun);
@@ -29,7 +26,7 @@ function activate(context) {
 	// Função para abrir preview ao lado
 	function openPreview() {
 		const panel = vscode.window.createWebviewPanel(
-			'tinkerPreview',
+			'tinkerbonPreview',
 			'Tinker Preview',
 			vscode.ViewColumn.Beside,
 			{ enableScripts: true }
@@ -41,7 +38,12 @@ function activate(context) {
 		// Recebe mensagens do botão
 		panel.webview.onDidReceiveMessage(async (message) => {
 			if (message.command === 'run') {
-				const output = await runTinkerCode(context);
+				if (!activeEditor) {
+					vscode.window.showErrorMessage('❌ Nenhum editor ativo para executar o Tinker.');
+					return;
+				}
+
+				const output = await runTinkerCode(activeEditor, context);
 				panel.webview.postMessage({ command: 'output', output });
 			}
 		});
@@ -65,7 +67,7 @@ function activate(context) {
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
 			</head>
 			<body>
-			<button onclick="run()">Executar Tinker</button>
+			<button onclick="run()" id="run">Executar Tinker</button>
 
 			<h1>Resultado:</h1>
 			<pre id="output">(resultado aparecerá aqui)</pre>
