@@ -5,11 +5,16 @@ const vscode = require('vscode');
 const outputChannel = vscode.window.createOutputChannel('Laravel Tinker');
 
 function runTinkerCode(editor, context) {
-    return new Promise((resolve) => {
-        if (!editor) return;
-
+    return new Promise((resolve, reject) => {
         const workspacePath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-        if (!workspacePath) return Promise.resolve('❌ Nenhum workspace aberto');
+        if (!workspacePath) return reject('❌ Nenhum workspace aberto');
+
+        const artisanPath = path.join(workspacePath, 'artisan');
+        if (!require('fs').existsSync(artisanPath)) {
+            return reject('❌ O workspace aberto não parece ser um projeto Laravel.');
+        }
+
+        if (!editor) return;
 
         let output = '';
         let error = '';
